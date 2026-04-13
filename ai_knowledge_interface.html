@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库AI客户端</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .status-badge {
+            background: #10b981;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .preview-card {
+            background: #f9fafb;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-container {
+            background: #1f2937;
+            color: #d1d5db;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .log-success {
+            color: #10b981;
+        }
+
+        .log-error {
+            color: #ef4444;
+        }
+
+        .log-info {
+            color: #3b82f6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .template-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .template-btn {
+            padding: 12px;
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .template-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .template-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .template-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧：指令生成 -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📝 知识卡片生成器</h2>
+                <span class="status-badge" id="statusBadge">就绪</span>
+            </div>
+
+            <div class="tab-container">
+                <div class="tab active" onclick="switchTab('manual')">手动创建</div>
+                <div class="tab" onclick="switchTab('ai')">AI生成</div>
+                <div class="tab" onclick="switchTab('templates')">模板</div>
+            </div>
+
+            <!-- 手动创建 -->
+            <div class="tab-content active" id="manualTab">
+                <div class="form-group">
+                    <label for="category">分类</label>
+                    <input type="text" id="category" placeholder="例如：编程、学习、知识管理" value="编程">
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">主题</label>
+                    <input type="text" id="subject" placeholder="例如：Python、方法论、格式" value="Python">
+                </div>
+
+                <div class="form-group">
+                    <label for="sequence">序号</label>
+                    <input type="text" id="sequence" placeholder="三位数字，例如：001" value="001">
+                </div>
+
+                <div class="form-group">
+                    <label for="title">标题</label>
+                    <input type="text" id="title" placeholder="卡片标题" value="Python装饰器详解">
+                </div>
+
+                <div class="form-group">
+                    <label for="tags">标签（逗号分隔）</label>
+                    <input type="text" id="tags" placeholder="例如：装饰器,Python,函数式编程" value="装饰器,Python,函数式编程">
+                </div>
+
+                <div class="form-group">
+                    <label for="body">内容</label>
+                    <textarea id="body" placeholder="详细内容...">装饰器是Python中一种强大的语法糖，本质是一个函数，其核心原理基于闭包机制和高阶函数...</textarea>
+                </div>
+            </div>
+
+            <!-- AI生成 -->
+            <div class="tab-content" id="aiTab">
+                <div class="form-group">
+                    <label for="aiTopic">主题描述</label>
+                    <textarea id="aiTopic" placeholder="请描述你想生成的知识卡片主题...">请生成关于Python装饰器的知识卡片，包括原理、语法结构、应用场景和注意事项。</textarea>
+                </div>
+                <button class="btn" onclick="generateWithAI()">🤖 AI生成卡片</button>
+            </div>
+
+            <!-- 模板 -->
+            <div class="tab-content" id="templatesTab">
+                <div class="template-selector">
+                    <div class="template-btn active" onclick="loadTemplate('python')">Python编程</div>
+                    <div class="template-btn" onclick="loadTemplate('learning')">学习方法</div>
+                    <div class="template-btn" onclick="loadTemplate('markdown')">Markdown</div>
+                    <div class="template-btn" onclick="loadTemplate('project')">项目管理</div>
+                    <div class="template-btn" onclick="loadTemplate('design')">设计模式</div>
+                    <div class="template-btn" onclick="loadTemplate('empty')">空白模板</div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn" onclick="generateJSON()">📄 生成JSON</button>
+                <button class="btn btn-secondary" onclick="sendToInbox()">📤 发送到Inbox</button>
+            </div>
+
+            <div class="preview-card" id="jsonPreview">
+                // JSON预览将显示在这里
+            </div>
+        </div>
+
+        <!-- 右侧：系统状态 -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📊 系统状态</h2>
+                <span class="status-badge" id="systemStatus">运行中</span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="cardsCount">3</div>
+                    <div class="stat-label">记忆库卡片</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="processedCount">4</div>
+                    <div class="stat-label">已处理指令</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="inboxCount">0</div>
+                    <div class="stat-label">待处理指令</div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label>操作日志</label>
+                <div class="log-container" id="logContainer">
+                    <div class="log-entry log-info">[20:08] 系统启动</div>
+                    <div class="log-entry log-success">[20:03] 卡片【编程-Python-001】已写入</div>
+                    <div class="log-entry log-success">[20:03] 卡片【学习-方法论-001】已写入</div>
+                    <div class="log-entry log-success">[20:04] 卡片【知识管理-格式-001】已写入</div>
+                </div>
+            </div>
+
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn" onclick="refreshStats()">🔄 刷新状态</button>
+                <button class="btn btn-secondary" onclick="clearLogs()">🗑️ 清空日志</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 系统配置
+        const CONFIG = {
+            inboxPath: 'F:/雾月督政府/上层/inbox',
+            memoryFile: 'F:/雾月督政府/上层/记忆库.md',
+            apiEndpoint: 'https://bobdong.cn/v1/chat/completions',
+            apiKey: 'sk-hq0O0455gOd5ctn6r2VmcMpteRHItx18BmChx6reccVeHQyX'
+        };
+
+        // 模板数据
+        const TEMPLATES = {
+            python: {
+                category: '编程',
+                subject: 'Python',
+                sequence: '001',
+                title: 'Python装饰器详解',
+                tags: '装饰器,Python,函数式编程,闭包,元编程',
+                body: '装饰器是Python中一种强大的语法糖，本质是一个函数，其核心原理基于以下几点：\n\n1. **闭包机制**：装饰器利用闭包来捕获外部函数的变量\n2. **高阶函数**：接受函数作为参数或返回函数的函数\n3. **函数即对象**：Python中函数是一等公民\n\n## 基础语法\n```python\n@decorator\ndef function():\n    pass\n```'
+            },
+            learning: {
+                category: '学习',
+                subject: '方法论',
+                sequence: '001',
+                title: '费曼学习法',
+                tags: '费曼学习法,学习方法,知识理解,深度学习',
+                body: '费曼学习法基于"确认偏误"和"知识诅咒"两个认知心理学原理：\n\n### 四步曲\n1. **选择概念**：明确要学习的主题\n2. **教授他人**：向完全陌生的人解释\n3. **回顾卡点**：发现说不清楚的地方\n4. **简化类比**：用日常比喻重新表述\n\n### 检验标准\n小学生能听懂你的解释。'
+            },
+            markdown: {
+                category: '知识管理',
+                subject: '格式',
+                sequence: '001',
+                title: 'Markdown标题格式规范',
+                tags: 'Markdown,格式规范,文档写作,结构化',
+                body: '## Markdown标题语法\n\n### ATX格式（推荐）\n```markdown\n# 一级标题\n## 二级标题\n### 三级标题\n```\n\n### SETEX格式\n```markdown\n一级标题\n========\n二级标题\n--------\n```\n\n## 最佳实践\n1. 井号后加空格\n2. 避免跳级\n3. 标题长度适中'
+            },
+            project: {
+                category: '管理',
+                subject: '项目',
+                sequence: '001',
+                title: '敏捷开发流程',
+                tags: '敏捷,项目管理,Scrum,迭代',
+                body: '敏捷开发是一种迭代式、增量的软件开发方法：\n\n### 核心原则\n1. **个体和互动**高于流程和工具\n2. **可工作的软件**高于详尽的文档\n3. **客户合作**高于合同谈判\n4. **响应变化**高于遵循计划\n\n### Scrum框架\n- 产品待办列表\n- 冲刺计划\n- 每日站会\n- 冲刺评审\n- 冲刺回顾'
+            },
+            design: {
+                category: '编程',
+                subject: '设计模式',
+                sequence: '001',
+                title: '单例模式',
+                tags: '设计模式,单例,创建型模式',
+                body: '单例模式确保一个类只有一个实例，并提供一个全局访问点：\n\n### Python实现\n```python\nclass Singleton:\n    _instance = None\n    \n    def __new__(cls):\n        if cls._instance is None:\n            cls._instance = super().__new__(cls)\n        return cls._instance\n```\n\n### 应用场景\n1. 数据库连接池\n2. 配置管理器\n3. 日志记录器\n4. 缓存管理器'
+            },
+            empty: {
+                category: '',
+                subject: '',
+                sequence: '',
+                title: '',
+                tags: '',
+                body: ''
+            }
+        };
+
+        // 切换标签页
+        function switchTab(tabName) {
+            // 更新标签
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.textContent.includes(tabName === 'manual' ? '手动创建' : 
+                                            tabName === 'ai' ? 'AI生成' : '模板')) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // 更新内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // 加载模板
+        function loadTemplate(templateName) {
+            const template = TEMPLATES[templateName];
+            if (!template) return;
+
+            // 更新模板按钮状态
+            document.querySelectorAll('.template-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 填充表单
+            document.getElementById('category').value = template.category;
+            document.getElementById('subject').value = template.subject;
+            document.getElementById('sequence').value = template.sequence;
+            document.getElementById

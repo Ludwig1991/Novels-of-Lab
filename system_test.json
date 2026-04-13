@@ -1,0 +1,18 @@
+{
+  "command": "write_card",
+  "payload": {
+    "target_file": "记忆库.md",
+    "content": {
+      "code": "测试-串联-001",
+      "title": "完整系统测试",
+      "tags": [
+        "自动化",
+        "测试",
+        "串联"
+      ],
+      "timestamp": "2026-03-31 19:53",
+      "body": "这是完整系统串联测试生成的卡片。所有模块运行正常！"
+    },
+    "mode": "append"
+  }
+}

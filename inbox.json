@@ -1,0 +1,18 @@
+[
+    {
+      "id": "msg_001",
+      "type": "ai_response",
+      "content": "问题：如何快速学习新技能？解决方案：使用000-001-111学习理论框架",
+      "timestamp": "2024-01-01T12:00:00",
+      "status": "pending",
+      "source": "ai_client"
+    },
+    {
+      "id": "msg_002", 
+      "type": "manual_input",
+      "content": "Word快速调整行距快捷键：Ctrl+1单倍，Ctrl+2双倍",
+      "timestamp": "2024-01-01T12:05:00",
+      "status": "pending",
+      "tags": ["Word", "快捷键"]
+    }
+  ]

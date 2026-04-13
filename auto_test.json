@@ -1,0 +1,17 @@
+{
+  "command": "write_card",
+  "payload": {
+    "target_file": "记忆库.md",
+    "content": {
+      "code": "自动-测试-001",
+      "title": "自动测试卡片",
+      "tags": [
+        "自动测试",
+        "watchdog"
+      ],
+      "timestamp": "2026-03-31 19:49",
+      "body": "这是通过自动监听系统生成的测试卡片。"
+    },
+    "mode": "append"
+  }
+}

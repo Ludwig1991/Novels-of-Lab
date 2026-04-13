@@ -1,0 +1,14 @@
+{
+  "command": "write_card",
+  "payload": {
+    "target_file": "记忆库.md",
+    "content": {
+      "code": "测试-系统-001",
+      "title": "知识库系统测试卡片",
+      "tags": ["测试", "自动化", "Python"],
+      "timestamp": "2026-03-31",
+      "body": "这是通过 Watchdog 和 Jinja2 自动生成的测试卡片内容。系统运行正常！"
+    },
+    "mode": "append"
+  }
+}
