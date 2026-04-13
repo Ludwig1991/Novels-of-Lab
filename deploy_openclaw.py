@@ -2,10 +2,10 @@ import paramiko, sys
 
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
-host = "223.109.49.160"
+host = "XXX"
 port = 22
-user = "root"
-password = "BEZAeGg:"
+user = "XX"
+password = "BXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXg:"
 
 def run(ssh, cmd, timeout=60):
     stdin, stdout, stderr = ssh.exec_command(cmd, timeout=timeout, get_pty=True)
